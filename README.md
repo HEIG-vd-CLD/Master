@@ -39,12 +39,12 @@ Sample :
 |:--|:--|
 |Name|SUB-PRIVATE-DEVOPSTEAM<XX>|
 |Vpc-id|vpc-03d46c285a2af77ba|
-|IPv4 CIDR block|10.0.<XX>.0/28|
+|IPv4 CIDR block|10.0.[XX].0/28|
 |Availability Zone|eu-west-3a|
 
 #### A note on regions
 
-By selecting a region an AWS user is able to control where in the
+By selecting a region an AWS user can control where in the
 world his virtual machines or other cloud resources are located, for
 example in a particular country or close to the majority of users.
 
