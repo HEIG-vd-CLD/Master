@@ -18,7 +18,11 @@ instances.
 
 ```bash
 [INPUT]
-
+aws ec2 create-security-group \
+    --group-name SG-DEVOPSTEAM10-LB \
+    --description "Security group for the ELB" \
+    --vpc-id <vpc_id> \
+    --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value=SG-DEVOPSTEAM10-LB}]'
 
 [OUTPUT]
 

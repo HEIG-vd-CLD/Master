@@ -228,7 +228,7 @@ aws ec2 run-instances \
 # SUBNET A
 ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2223:10.0.10.7:22 -L 8080:10.0.10.7:8080
 # SUBNET B
-ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2224:10.0.10.140:22 -L 8080:10.0.10.140:8080
+ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2224:10.0.10.140:22 -L 8081:10.0.10.140:8080
 
 ssh bitnami@localhost -p 2223 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 ssh bitnami@localhost -p 2224 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
@@ -241,17 +241,35 @@ ssh bitnami@localhost -p 2224 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 ```sql
 [INPUT]
 //sql string connection from A
-mysql -h <RDS_endpoint> -u <username> -p <password> -e "SELECT * FROM your_table;"
-mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com  -u admin -p -e "SELECT * FROM your_table;"
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
+
+show databases;
 
 [OUTPUT]
++--------------------+
+| Database           |
++--------------------+
+| bitnami_drupal     |
+| information_schema |
++--------------------+
+2 rows in set (0.001 sec)
 ```
 
 ```sql
 [INPUT]
 //sql string connection from B
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
+
 
 [OUTPUT]
++--------------------+
+| Database           |
++--------------------+
+| bitnami_drupal     |
+| information_schema |
++--------------------+
+2 rows in set (0.001 sec)
+
 ```
 
 ### Check HTTP Accesses
