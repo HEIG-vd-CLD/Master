@@ -73,7 +73,7 @@ Note : you can do this from the Drupal Instance. Do not forget to set the "-h" p
 
 ```sql
 [INPUT]
-mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com  --user admin --password bitnami_drupal < drupal_backup.sql
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com --user admin --password bitnami_drupal < drupal_backup.sql
 
 [OUTPUT]
 None
@@ -108,7 +108,7 @@ $databases['default']['default'] = array (
 
 $databases['default']['default'] = array (
    [...] 
-  'host' => 'dbi-devopsteam99.cshki92s4w5p.eu-west-3.rds.amazonaws.com',
+  'host' => 'dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com',
    [...] 
 );
 ```

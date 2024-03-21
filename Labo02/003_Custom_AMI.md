@@ -15,6 +15,7 @@ Note : stop the instance before
 
 ```bash
 # Stop instance
+// instance drupal A
 aws ec2 stop-instances --instance-ids i-0caae283ae8f9517c
 {
     "StoppingInstances": [
@@ -64,7 +65,7 @@ aws ec2 create-image --instance-id i-0caae283ae8f9517c --name AMI_DRUPAL_DEVOPST
 aws ec2 start-instances --instance-ids i-0caae283ae8f9517c
 
 # Deploy Drupal Instance in AZ2
-# ip address 130 reserved, so 140
+# ip address 130 reserved, so set to 140
 aws ec2 run-instances \
     --count 1 \
     --image-id ami-0900ddd620caee904 \
@@ -243,6 +244,7 @@ ssh bitnami@localhost -p 2224 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 //sql string connection from A
 mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
 
+// Then in Mariadb
 show databases;
 
 [OUTPUT]
@@ -260,6 +262,8 @@ show databases;
 //sql string connection from B
 mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
 
+// Then in Mariadb
+show databases;
 
 [OUTPUT]
 +--------------------+
@@ -277,6 +281,7 @@ mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupa
 ```bash
 //connection string updated
 curl http://localhost:8080
+curl http://localhost:8081
 
 ```
 
@@ -290,6 +295,7 @@ curl http://localhost:8080
 
 ```
 //TODO
+It changes on both webapps
 ```
 
 ### Change the profile picture
