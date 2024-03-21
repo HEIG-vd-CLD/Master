@@ -14,9 +14,18 @@ Note : stop the instance before
 |Description|Same as name value|
 
 ```bash
+TODO redo this command
 [INPUT]
+aws ec2 create-image --instance-id i-0bc78af28a21cc344 --name AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS --description AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS \
+--tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS}]'
+
 
 [OUTPUT]
+
+{
+    "ImageId": "ami-04bf78923175ffe07"
+}
+
 
 ```
 
@@ -33,7 +42,16 @@ Note : stop the instance before
 
 ```bash
 [INPUT]
+# Restart Drupal Instance in AZ1 (A)
+aws ec2 start-instances --instance-ids i-0caae283ae8f9517c
 
+# Deploy Drupal Instance in AZ2
+aws ec2 run-instances \
+    --image-id <ami_id> \
+    --instance-type <instance_type> \
+    --subnet-id subnet-06579a70777df8833\
+    --security-group-ids  vpc-03d46c285a2af77ba \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=EC2_PRIVATE_DRUPAL_DEVOPSTEAM10_B},{Key=Description,Value=EC2_PRIVATE_DRUPAL_DEVOPSTEAM10_B}]'
 [OUTPUT]
 ```
 
@@ -44,6 +62,9 @@ Note : stop the instance before
 * add tunnels for ssh and http pointing on the B Instance
 
 ```bash
+# TODO change ip address
+ssh -i CLD_KEY_DMZ_SSH_CLD_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2223:10.0.10.7:22 
+
 //updated string connection
 ```
 
@@ -52,6 +73,8 @@ Note : stop the instance before
 ```sql
 [INPUT]
 //sql string connection from A
+mysql -h <RDS_endpoint> -u <username> -p <password> -e "SELECT * FROM your_table;"
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com  -u admin -p -e "SELECT * FROM your_table;"
 
 [OUTPUT]
 ```
@@ -67,6 +90,8 @@ Note : stop the instance before
 
 ```bash
 //connection string updated
+curl http://localhost:8080
+
 ```
 
 ### Read and write test through the web app
@@ -81,7 +106,7 @@ Note : stop the instance before
 //TODO
 ```
 
-### Change the profil picture
+### Change the profile picture
 
 * Observations ?
 
