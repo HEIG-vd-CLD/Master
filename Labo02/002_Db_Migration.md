@@ -108,7 +108,7 @@ $databases['default']['default'] = array (
 
 $databases['default']['default'] = array (
    [...] 
-  'host' => 'dbi-devopsteam99.cshki92s4w5p.eu-west-3.rds.amazonaws.com',
+  'host' => 'dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com',
    [...] 
 );
 ```
