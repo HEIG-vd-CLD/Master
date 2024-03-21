@@ -226,11 +226,11 @@ aws ec2 run-instances \
 
 ```bash
 # SUBNET A
-ssh -i CLD_KEY_DMZ_SSH_CLD_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 \
--L 2223:10.0.10.7:8080
+ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 \
+-L 2223:10.0.10.7:22 -L 8080:10.0.10.7:8080
 # SUBNET B
-ssh -i CLD_KEY_DMZ_SSH_CLD_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 \
--L 2224:10.0.140.7:8080
+ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 \
+-L 2224:10.0.140.7:22 -L 8080:10.0.140.7:8080
 
 ssh bitnami@localhost -p 2223 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 ssh bitnami@localhost -p 2224 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
