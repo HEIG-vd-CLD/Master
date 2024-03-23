@@ -54,7 +54,7 @@ show databases;
 
 ```bash
 [INPUT]
-mysqldump -u root -p bitnami_drupal > drupal_backup.sql 
+mariadb-dump -u root -p bitnami_drupal > drupal_backup.sql 
 [OUTPUT]
 None
 ```
@@ -62,8 +62,8 @@ None
 ### Create the new Data base on RDS
 
 ```sql
-# On mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u admin -p 
 [INPUT]
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u admin -p 
 CREATE DATABASE bitnami_drupal;
 ```
 
@@ -77,9 +77,86 @@ mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com --user admi
 
 [OUTPUT]
 None
-
 # Check if correctly loaded
-SELECT * FROM bitnami_drupal;
+SHOW TABLES FROM bitnami_drupal;
++----------------------------------+
+| Tables_in_bitnami_drupal         |
++----------------------------------+
+| block_content                    |
+| block_content__body              |
+| block_content_field_data         |
+| block_content_field_revision     |
+| block_content_revision           |
+| block_content_revision__body     |
+| cache_bootstrap                  |
+| cache_config                     |
+| cache_container                  |
+| cache_data                       |
+| cache_default                    |
+| cache_discovery                  |
+| cache_dynamic_page_cache         |
+| cache_entity                     |
+| cache_menu                       |
+| cache_page                       |
+| cache_render                     |
+| cache_toolbar                    |
+| cachetags                        |
+| comment                          |
+| comment__comment_body            |
+| comment_entity_statistics        |
+| comment_field_data               |
+| config                           |
+| file_managed                     |
+| file_usage                       |
+| help_search_items                |
+| history                          |
+| key_value                        |
+| menu_link_content                |
+| menu_link_content_data           |
+| menu_link_content_field_revision |
+| menu_link_content_revision       |
+| menu_tree                        |
+| node                             |
+| node__body                       |
+| node__comment                    |
+| node__field_image                |
+| node__field_tags                 |
+| node_access                      |
+| node_field_data                  |
+| node_field_revision              |
+| node_revision                    |
+| node_revision__body              |
+| node_revision__comment           |
+| node_revision__field_image       |
+| node_revision__field_tags        |
+| path_alias                       |
+| path_alias_revision              |
+| router                           |
+| search_dataset                   |
+| search_index                     |
+| search_total                     |
+| semaphore                        |
+| sequences                        |
+| sessions                         |
+| shortcut                         |
+| shortcut_field_data              |
+| shortcut_set_users               |
+| taxonomy_index                   |
+| taxonomy_term__parent            |
+| taxonomy_term_data               |
+| taxonomy_term_field_data         |
+| taxonomy_term_field_revision     |
+| taxonomy_term_revision           |
+| taxonomy_term_revision__parent   |
+| user__roles                      |
+| user__user_picture               |
+| users                            |
+| users_data                       |
+| users_field_data                 |
+| watchdog                         |
++----------------------------------+
+72 rows in set (0.001 sec)
+
 ```
 
 ### [Get the current Drupal connection string parameters](https://www.drupal.org/docs/8/api/database-api/database-configuration)
@@ -112,6 +189,11 @@ $databases['default']['default'] = array (
    [...] 
 );
 ```
+```bash
+sudo nano stack/drupal/sites/default/settings.php
+'host' => 'dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com',
+
+```
 
 ### [Create the Drupal Users on RDS Data base](https://mariadb.com/kb/en/create-user/)
 
@@ -122,6 +204,7 @@ Note : only calls from both private subnets must be approved.
 
 ```sql
 [INPUT]
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u admin -p
 CREATE USER 'bn_drupal'@'10.0.10.0/255.255.255.240' IDENTIFIED BY '2b9defd18a354804a1d4c4742c252fb39d808c12cfc2046ffc8f31432ae8a060';
 
 GRANT ALL PRIVILEGES ON bitnami_drupal.* TO 'bn_drupal'@'10.0.10.0/255.255.255.240';
@@ -159,8 +242,8 @@ SHOW GRANTS for 'bn_drupal'@'10.0.10.0/255.255.255.240';
 
 ```sql
 [INPUT]
-mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
-
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p 
+// enter password: 2b9defd18a354804a1d4c4742c252fb39d808c12cfc2046ffc8f31432ae8a060
 [INPUT]
 show databases;
 
@@ -178,6 +261,7 @@ show databases;
 
 ```sql
 [INPUT]
+mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u admin -p
 CREATE USER 'bn_drupal'@'10.0.10.128/255.255.255.240' IDENTIFIED BY '2b9defd18a354804a1d4c4742c252fb39d808c12cfc2046ffc8f31432ae8a060';
 
 GRANT ALL PRIVILEGES ON bitnami_drupal.* TO 'bn_drupal'@'10.0.10.128/255.255.255.240';

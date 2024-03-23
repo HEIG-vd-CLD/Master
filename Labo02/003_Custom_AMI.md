@@ -15,8 +15,11 @@ Note : stop the instance before
 
 ```bash
 # Stop instance
-// instance drupal A
-aws ec2 stop-instances --instance-ids i-0caae283ae8f9517c
+# Get instance drupal A
+# aws ec2 describe-instances --filters "Name=tag:Name,Values=EC2_PRIVATE_DRUPAL_DEVOPSTEAM10_A" --query "Reservations[*].Instances[*].InstanceId" --output text
+
+aws ec2 stop-instances --instance-ids i-06aec672ad207f4c3
+
 {
     "StoppingInstances": [
         {
@@ -24,7 +27,7 @@ aws ec2 stop-instances --instance-ids i-0caae283ae8f9517c
                 "Code": 64,
                 "Name": "stopping"
             },
-            "InstanceId": "i-0caae283ae8f9517c",
+            "InstanceId": "i-06aec672ad207f4c3",
             "PreviousState": {
                 "Code": 16,
                 "Name": "running"
@@ -33,19 +36,20 @@ aws ec2 stop-instances --instance-ids i-0caae283ae8f9517c
     ]
 }
 
+
 # Create AMI
 [INPUT] 
-aws ec2 create-image --instance-id i-0caae283ae8f9517c --name AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS --description AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS \
+aws ec2 create-image \
+--instance-id i-06aec672ad207f4c3 \
+--name AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS \
+--description AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS \
 --tag-specifications 'ResourceType=image,Tags=[{Key=Name,Value=AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS}]' 
 
 [OUTPUT]
 
 {
-    "ImageId": "ami-0900ddd620caee904"
+    "ImageId": "ami-0ef45705bb637c91f"
 }
-
-
-
 ```
 
 ## Task 02 - Deploy Instances
@@ -62,13 +66,44 @@ aws ec2 create-image --instance-id i-0caae283ae8f9517c --name AMI_DRUPAL_DEVOPST
 ```bash
 [INPUT]
 # Restart Drupal Instance in AZ1 (A)
-aws ec2 start-instances --instance-ids i-0caae283ae8f9517c
+aws ec2 start-instances --instance-ids i-06aec672ad207f4c3
+{
+    "StartingInstances": [
+        {
+            "CurrentState": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "InstanceId": "i-06aec672ad207f4c3",
+            "PreviousState": {
+                "Code": 80,
+                "Name": "stopped"
+            }
+        }
+    ]
+}
+:...skipping...
+{
+    "StartingInstances": [
+        {
+            "CurrentState": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "InstanceId": "i-06aec672ad207f4c3",
+            "PreviousState": {
+                "Code": 80,
+                "Name": "stopped"
+            }
+        }
+    ]
+}
 
 # Deploy Drupal Instance in AZ2
 # ip address 130 reserved, so set to 140
 aws ec2 run-instances \
     --count 1 \
-    --image-id ami-0900ddd620caee904 \
+    --image-id ami-0ef45705bb637c91f \
     --instance-type t3.micro \
     --key-name CLD_KEY_DRUPAL_DEVOPSTEAM10 \
     --private-ip-address 10.0.10.140 \
@@ -82,24 +117,11 @@ aws ec2 run-instances \
     "Instances": [
         {
             "AmiLaunchIndex": 0,
-            "ImageId": "ami-0900ddd620caee904",
-            "InstanceId": "i-00fcb741b3f8e348a",
+            "ImageId": "ami-0ef45705bb637c91f",
+            "InstanceId": "i-010889f22f8bab126",
             "InstanceType": "t3.micro",
             "KeyName": "CLD_KEY_DRUPAL_DEVOPSTEAM10",
-            "LaunchTime": "2024-03-21T13:08:05+00:00",
-            "Monitoring": {
-                "State": "disabled"
-:...skipping...
-{
-    "Groups": [],
-    "Instances": [
-        {
-            "AmiLaunchIndex": 0,
-            "ImageId": "ami-0900ddd620caee904",
-            "InstanceId": "i-00fcb741b3f8e348a",
-            "InstanceType": "t3.micro",
-            "KeyName": "CLD_KEY_DRUPAL_DEVOPSTEAM10",
-            "LaunchTime": "2024-03-21T13:08:05+00:00",
+            "LaunchTime": "2024-03-23T13:32:45+00:00",
             "Monitoring": {
                 "State": "disabled"
             },
@@ -121,15 +143,15 @@ aws ec2 run-instances \
             "VpcId": "vpc-03d46c285a2af77ba",
             "Architecture": "x86_64",
             "BlockDeviceMappings": [],
-            "ClientToken": "acc86ac1-bac4-45cb-a10f-15e7ab6f9f3b",
+            "ClientToken": "ba846e55-15c2-4f94-a921-8478bce91555",
             "EbsOptimized": false,
             "EnaSupport": true,
             "Hypervisor": "xen",
             "NetworkInterfaces": [
                 {
                     "Attachment": {
-                        "AttachTime": "2024-03-21T13:08:05+00:00",
-                        "AttachmentId": "eni-attach-0e0c95e2cc2f41c61",
+                        "AttachTime": "2024-03-23T13:32:45+00:00",
+                        "AttachmentId": "eni-attach-0856a6afaff25145a",
                         "DeleteOnTermination": true,
                         "DeviceIndex": 0,
                         "Status": "attaching",
@@ -143,8 +165,8 @@ aws ec2 run-instances \
                         }
                     ],
                     "Ipv6Addresses": [],
-                    "MacAddress": "0a:70:34:94:81:57",
-                    "NetworkInterfaceId": "eni-064539a2aa9524d8f",
+                    "MacAddress": "0a:99:9d:34:0e:4b",
+                    "NetworkInterfaceId": "eni-02af271f83ea2aee9",
                     "OwnerId": "709024702237",
                     "PrivateIpAddress": "10.0.10.140",
                     "PrivateIpAddresses": [
@@ -214,7 +236,7 @@ aws ec2 run-instances \
         }
     ],
     "OwnerId": "709024702237",
-    "ReservationId": "r-062f5cf71307c8f2f"
+    "ReservationId": "r-0d12fbc404958e570"
 }
 
 ```
@@ -226,10 +248,14 @@ aws ec2 run-instances \
 * add tunnels for ssh and http pointing on the B Instance
 
 ```bash
+
 # SUBNET A
-ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2223:10.0.10.7:22 -L 8080:10.0.10.7:8080
+ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 \
+-L 2223:10.0.10.12:22 -L 8080:10.0.10.12:8080
+
 # SUBNET B
-ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2224:10.0.10.140:22 -L 8081:10.0.10.140:8080
+ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 \
+-L 2224:10.0.10.140:22 -L 8081:10.0.10.140:8080
 
 ssh bitnami@localhost -p 2223 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 ssh bitnami@localhost -p 2224 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
@@ -243,7 +269,7 @@ ssh bitnami@localhost -p 2224 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 [INPUT]
 //sql string connection from A
 mariadb -h dbi-devopsteam10.cshki92s4w5p.eu-west-3.rds.amazonaws.com -u bn_drupal -p
-
+// 2b9defd18a354804a1d4c4742c252fb39d808c12cfc2046ffc8f31432ae8a060
 // Then in Mariadb
 show databases;
 
@@ -281,7 +307,6 @@ show databases;
 ```bash
 //connection string updated
 curl http://localhost:8080
-curl http://localhost:8081
 
 ```
 
@@ -295,7 +320,7 @@ curl http://localhost:8081
 
 ```
 //TODO
-It changes on both webapps
+The address is updated on both webapps. The two instances are communicating with the same database.
 ```
 
 ### Change the profile picture
@@ -304,4 +329,5 @@ It changes on both webapps
 
 ```
 //TODO
+  We are able to see the profile picture on only one of the webapps. For the other one, we can only see a broken image.
 ```
