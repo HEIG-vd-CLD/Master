@@ -26,13 +26,39 @@ aws ec2 create-security-group \
     --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value=SG-DEVOPSTEAM10-LB}]'
 
 [OUTPUT]
+{
+    "GroupId": "sg-0689100284e4dd5bc",
+    "Tags": [
+        {
+            "Key": "Name",
+            "Value": "SG-DEVOPSTEAM10-LB"
+        }
+    ]
+}
 
 [INPUT]
 aws ec2 authorize-security-group-ingress \
-    --group-id <created_sg> \
+    --group-id sg-0689100284e4dd5bc \
     --protocol tcp \
     --port 8080 \
     --cidr 10.0.10.0/28
+    
+[OUTPUT]
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-00ffefdc0eb513716",
+            "GroupId": "sg-0689100284e4dd5bc",
+            "GroupOwnerId": "709024702237",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 8080,
+            "ToPort": 8080,
+            "CidrIpv4": "10.0.10.0/28"
+        }
+    ]
+}
 
 ```
 
@@ -69,21 +95,46 @@ aws elbv2 create-target-group \
     --healthy-threshold-count 2 \
     --unhealthy-threshold-count 2 \
     --vpc-id vpc-03d46c285a2af77ba \
-    --target-group-attributes Key=deregistration_delay.timeout_seconds,Value=300 \
     --protocol-version HTTP1 \
     --tags Key=Name,Value=TG-DEVOPSTEAM10
 
 
 [OUTPUT]
+{
+    "TargetGroups": [
+        {
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:eu-west-3:709024702237:targetgroup/TG-DEVOPSTEAM10/49cb5841e91f6eeb",
+            "TargetGroupName": "TG-DEVOPSTEAM10",
+            "Protocol": "HTTP",
+            "Port": 8080,
+            "VpcId": "vpc-03d46c285a2af77ba",
+            "HealthCheckProtocol": "HTTP",
+            "HealthCheckPort": "traffic-port",
+            "HealthCheckEnabled": true,
+            "HealthCheckIntervalSeconds": 10,
+            "HealthCheckTimeoutSeconds": 5,
+            "HealthyThresholdCount": 2,
+            "UnhealthyThresholdCount": 2,
+            "HealthCheckPath": "/",
+            "Matcher": {
+                "HttpCode": "200"
+            },
+            "TargetType": "instance",
+            "ProtocolVersion": "HTTP1",
+            "IpAddressType": "ipv4"
+        }
+    ]
+}
 
 [INPUT]
+# instance A : 
 # register instances A and B to the target group
 aws elbv2 register-targets \
-    --target-group-arn <target_group_arn> \
-    --targets Id=i-0caae283ae8f9517c Id=i-0caae283ae8f9517d
+    --target-group-arn arn:aws:elasticloadbalancing:eu-west-3:709024702237:targetgroup/TG-DEVOPSTEAM10/49cb5841e91f6eeb \
+    --targets Id=i-06aec672ad207f4c3 Id=i-010889f22f8bab126
 
 [OUTPUT]
-
+None
 ```
 
 
@@ -116,11 +167,44 @@ aws elbv2 create-load-balancer \
     --scheme internal \
     --ip-address-type ipv4 \
     --subnets subnet-02291f4084cacd8c9 subnet-06579a70777df8833 \
-    --security-groups <security_group_ids_LB> \
+    --security-groups sg-0689100284e4dd5bc \
     --tags Key=Name,Value=ELB-DEVOPSTEAM10
 
 
 [OUTPUT]
+{
+    "LoadBalancers": [
+        {
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:eu-west-3:709024702237:loadbalancer/app/ELB-DEVOPSTEAM10/7c088baef9402321",
+            "DNSName": "internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com",
+            "CanonicalHostedZoneId": "Z3Q77PNBQS71R4",
+            "CreatedTime": "2024-03-23T14:27:59.600000+00:00",
+            "LoadBalancerName": "ELB-DEVOPSTEAM10",
+            "Scheme": "internal",
+            "VpcId": "vpc-03d46c285a2af77ba",
+            "State": {
+                "Code": "provisioning"
+            },
+            "Type": "application",
+            "AvailabilityZones": [
+                {
+                    "ZoneName": "eu-west-3a",
+                    "SubnetId": "subnet-02291f4084cacd8c9",
+                    "LoadBalancerAddresses": []
+                },
+                {
+                    "ZoneName": "eu-west-3b",
+                    "SubnetId": "subnet-06579a70777df8833",
+                    "LoadBalancerAddresses": []
+                }
+            ],
+            "SecurityGroups": [
+                "sg-0689100284e4dd5bc"
+            ],
+            "IpAddressType": "ipv4"
+        }
+    ]
+}
 
 ```
 
@@ -129,12 +213,39 @@ aws elbv2 create-load-balancer \
 ```bash
 [INPUT]
 aws elbv2 create-listener \
-    --load-balancer-arn <load_balancer_arn> \
+    --load-balancer-arn arn:aws:elasticloadbalancing:eu-west-3:709024702237:loadbalancer/app/ELB-DEVOPSTEAM10/7c088baef9402321 \
     --protocol HTTP \
     --port 8080 \
-    --default-actions Type=forward,TargetGroupArn=<target_group_arn>
+    --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:eu-west-3:709024702237:targetgroup/TG-DEVOPSTEAM10/49cb5841e91f6eeb
 
 [OUTPUT]
+{
+    "Listeners": [
+        {
+            "ListenerArn": "arn:aws:elasticloadbalancing:eu-west-3:709024702237:listener/app/ELB-DEVOPSTEAM10/7c088baef9402321/54fc535210bf9a6a",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:eu-west-3:709024702237:loadbalancer/app/ELB-DEVOPSTEAM10/7c088baef9402321",
+            "Port": 8080,
+            "Protocol": "HTTP",
+            "DefaultActions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:eu-west-3:709024702237:targetgroup/TG-DEVOPSTEAM10/49cb5841e91f6eeb",
+                    "ForwardConfig": {
+                        "TargetGroups": [
+                            {
+                                "TargetGroupArn": "arn:aws:elasticloadbalancing:eu-west-3:709024702237:targetgroup/TG-DEVOPSTEAM10/49cb5841e91f6eeb",
+                                "Weight": 1
+                            }
+                        ],
+                        "TargetGroupStickinessConfig": {
+                            "Enabled": false
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
 
 ```
 
@@ -146,6 +257,8 @@ aws elbv2 describe-load-balancers --names ELB-DEVOPSTEAM10 --query "LoadBalancer
 
 
 [OUTPUT]
+
+"internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com"
 
 ```
 
@@ -163,8 +276,8 @@ Note : In the EC2 console select the Target Group. In the
 //connection string updated
 
 ssh devopsteam10@15.188.43.46 -i CLD_KEY_DMZ_DEVOPSTEAM10.pem \
--L 2225:10.0.10.7:22 \
--L 8080:<load_balancer_dns_name>:8080 
+-L 2225:10.0.10.12:22 \
+-L 8080:internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com:8080 
 
 ```
 
@@ -186,7 +299,7 @@ curl localhost:8080
 
 ```
 //TODO
-nslookup <load_balancer_dns_name>
+nslookup internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com
 ```
 
 * From your Drupal instance, identify the ip from which requests are sent by the Load Balancer.
