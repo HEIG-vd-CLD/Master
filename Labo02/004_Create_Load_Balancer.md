@@ -41,7 +41,7 @@ aws ec2 authorize-security-group-ingress \
     --group-id sg-0689100284e4dd5bc \
     --protocol tcp \
     --port 8080 \
-    --cidr 10.0.10.0/28
+    --cidr 10.0.0.0/28
     
 [OUTPUT]
 {
@@ -55,7 +55,7 @@ aws ec2 authorize-security-group-ingress \
             "IpProtocol": "tcp",
             "FromPort": 8080,
             "ToPort": 8080,
-            "CidrIpv4": "10.0.10.0/28"
+            "CidrIpv4": "10.0.0.0/28"
         }
     ]
 }
@@ -311,7 +311,7 @@ aws ec2 authorize-security-group-ingress --group-id sg-06b029dc68a7bf11b --proto
 ssh devopsteam10@15.188.43.46 -i CLD_KEY_DMZ_DEVOPSTEAM10.pem \
 -L 2226:internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com:8080 
 
-[//]: # (ssh bitnami@localhost -p 2225 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem)
+[//]: # (ssh bitnami@localhost -p 80 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem)
 ```
 
 * Test your application through your ssh tunneling
@@ -319,17 +319,21 @@ ssh devopsteam10@15.188.43.46 -i CLD_KEY_DMZ_DEVOPSTEAM10.pem \
 ```bash
 [INPUT]
 // in host
-curl localhost:2226 -v
+curl localhost:2226
 
 [OUTPUT]
-TODO fix, no output
-*   Trying 127.0.0.1:2226...
-* Connected to localhost (127.0.0.1) port 2226 (#0)
-> GET / HTTP/1.1
-> Host: localhost:2226
-> User-Agent: curl/7.81.0
-> Accept: */*
-=> blocked
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" style="--color--primary-hue:202;--color--primary-saturation:79%;--color--primary-lightness:50">
+  <head>
+    <meta charset="utf-8" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/core/themes/olivero/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" type="application/rss+xml" title="" href="http://localhost:8080/rss.xml" />
+(...)
 
 ```
 
