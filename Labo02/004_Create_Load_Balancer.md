@@ -98,7 +98,6 @@ aws elbv2 create-target-group \
     --protocol-version HTTP1 \
     --tags Key=Name,Value=TG-DEVOPSTEAM10
 
-
 [OUTPUT]
 {
     "TargetGroups": [
@@ -127,7 +126,6 @@ aws elbv2 create-target-group \
 }
 
 [INPUT]
-# instance A : 
 # register instances A and B to the target group
 aws elbv2 register-targets \
     --target-group-arn arn:aws:elasticloadbalancing:eu-west-3:709024702237:targetgroup/TG-DEVOPSTEAM10/49cb5841e91f6eeb \
@@ -273,21 +271,65 @@ Note : In the EC2 console select the Target Group. In the
 * Update your string connection to test your ELB and test it
 
 ```bash
+// add ips 8080 port 
+aws ec2 authorize-security-group-ingress --group-id sg-06b029dc68a7bf11b --protocol tcp --port 8080 --cidr 10.0.10.0/28
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-04d157247d5ff4d96",
+            "GroupId": "sg-06b029dc68a7bf11b",
+            "GroupOwnerId": "709024702237",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 8080,
+            "ToPort": 8080,
+            "CidrIpv4": "10.0.10.0/28"
+        }
+    ]
+}
+
+aws ec2 authorize-security-group-ingress --group-id sg-06b029dc68a7bf11b --protocol tcp --port 8080 --cidr 10.0.10.128/28
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0676cab0f691bb3f8",
+            "GroupId": "sg-06b029dc68a7bf11b",
+            "GroupOwnerId": "709024702237",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 8080,
+            "ToPort": 8080,
+            "CidrIpv4": "10.0.10.128/28"
+        }
+    ]
+}
+
 //connection string updated
 
 ssh devopsteam10@15.188.43.46 -i CLD_KEY_DMZ_DEVOPSTEAM10.pem \
--L 2225:10.0.10.12:22 \
--L 8080:internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com:8080 
+-L 2226:internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com:8080 
 
+[//]: # (ssh bitnami@localhost -p 2225 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem)
 ```
 
 * Test your application through your ssh tunneling
 
 ```bash
 [INPUT]
-curl localhost:8080
+// in host
+curl localhost:2226 -v
 
 [OUTPUT]
+TODO fix, no output
+*   Trying 127.0.0.1:2226...
+* Connected to localhost (127.0.0.1) port 2226 (#0)
+> GET / HTTP/1.1
+> Host: localhost:2226
+> User-Agent: curl/7.81.0
+> Accept: */*
+=> blocked
 
 ```
 
@@ -300,6 +342,12 @@ curl localhost:8080
 ```
 //TODO
 nslookup internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com
+[OUTPUT]
+(...)
+Name:   internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com
+Address: 10.0.10.132
+Name:   internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com
+Address: 10.0.10.14
 ```
 
 * From your Drupal instance, identify the ip from which requests are sent by the Load Balancer.
@@ -308,9 +356,13 @@ Help : execute `tcpdump port 8080`
 
 ```
 //TODO
+// needs ssh tunneling
+ssh devopsteam10@15.188.43.46 -i CLD_KEY_DMZ_DEVOPSTEAM10.pem \
+ -L 2225:10.0.10.12:22 \
+-L 80:internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com:8080
+
+ssh bitnami@localhost -p 2225 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 sudo tcpdump port 8080
-
-
 ```
 
 * In the Apache access log identify the health check accesses from the
@@ -319,6 +371,14 @@ sudo tcpdump port 8080
 ```
 //TODO
 
+// in bitnami
 cat /opt/bitnami/apache/logs/access_log
 
+10.0.10.14 - - [27/Mar/2024:19:30:42 +0000] "GET / HTTP/1.1" 200 5146
+10.0.10.132 - - [27/Mar/2024:19:30:49 +0000] "GET / HTTP/1.1" 200 5146
+10.0.10.14 - - [27/Mar/2024:19:30:52 +0000] "GET / HTTP/1.1" 200 5146
+10.0.10.132 - - [27/Mar/2024:19:30:59 +0000] "GET / HTTP/1.1" 200 5146
+10.0.10.14 - - [27/Mar/2024:19:31:02 +0000] "GET / HTTP/1.1" 200 5146
+10.0.10.132 - - [27/Mar/2024:19:31:09 +0000] "GET / HTTP/1.1" 200 5146
+(...)
 ```
