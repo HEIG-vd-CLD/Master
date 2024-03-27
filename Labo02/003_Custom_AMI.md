@@ -98,9 +98,11 @@ aws ec2 start-instances --instance-ids i-06aec672ad207f4c3
         }
     ]
 }
+[OUTPUT]
 
 # Deploy Drupal Instance in AZ2
 # ip address 130 reserved, so set to 140
+[INPUT]
 aws ec2 run-instances \
     --count 1 \
     --image-id ami-0ef45705bb637c91f \
