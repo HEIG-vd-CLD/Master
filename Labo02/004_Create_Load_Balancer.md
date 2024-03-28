@@ -4,7 +4,6 @@ In this task you will create a load balancer in AWS that will receive
 the HTTP requests from clients and forward them to the Drupal
 instances.
 
-[//]: # (TODO note: nothing executed yet)
 ![Schema](./img/CLD_AWS_INFA.PNG)
 
 ## Task 01 Prerequisites for the ELB
@@ -271,7 +270,7 @@ Note : In the EC2 console select the Target Group. In the
 * Update your string connection to test your ELB and test it
 
 ```bash
-// add ips 8080 port 
+// add ips 8080 port for DMZ security group
 aws ec2 authorize-security-group-ingress --group-id sg-06b029dc68a7bf11b --protocol tcp --port 8080 --cidr 10.0.10.0/28
 {
     "Return": true,
@@ -311,7 +310,6 @@ aws ec2 authorize-security-group-ingress --group-id sg-06b029dc68a7bf11b --proto
 ssh devopsteam10@15.188.43.46 -i CLD_KEY_DMZ_DEVOPSTEAM10.pem \
 -L 2226:internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com:8080 
 
-[//]: # (ssh bitnami@localhost -p 80 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem)
 ```
 
 * Test your application through your ssh tunneling
@@ -344,7 +342,6 @@ curl localhost:2226
   the DNS name and the resolved IP Address(es) into the report.
 
 ```
-//TODO
 nslookup internal-ELB-DEVOPSTEAM10-394516614.eu-west-3.elb.amazonaws.com
 [OUTPUT]
 (...)
@@ -359,7 +356,6 @@ Address: 10.0.10.14
 Help : execute `tcpdump port 8080`
 
 ```
-//TODO
 // needs ssh tunneling
 ssh devopsteam10@15.188.43.46 -i CLD_KEY_DMZ_DEVOPSTEAM10.pem \
  -L 2225:10.0.10.12:22 \
@@ -373,8 +369,6 @@ sudo tcpdump port 8080
   load balancer and copy some samples into the report.
 
 ```
-//TODO
-
 // in bitnami
 cat /opt/bitnami/apache/logs/access_log
 

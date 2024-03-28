@@ -309,6 +309,7 @@ show databases;
 ```bash
 //connection string updated
 curl http://localhost:8080
+curl http://localhost:8081
 
 ```
 
@@ -321,8 +322,7 @@ curl http://localhost:8080
 * Observations ?
 
 ```
-//TODO
-The address is updated on both webapps. The two instances are communicating with the same database.
+The email address is updated on both webapps. The two instances are communicating with the same database.
 ```
 
 ### Change the profile picture
@@ -330,6 +330,5 @@ The address is updated on both webapps. The two instances are communicating with
 * Observations ?
 
 ```
-//TODO
-  We are able to see the profile picture on only one of the webapps. For the other one, we can only see a broken image.
+We are able to see the profile picture on only one of the webapps. For the other one, we can only see a broken image, because the image is stored on the filesystem of the instance.
 ```

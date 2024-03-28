@@ -226,7 +226,6 @@ SHOW GRANTS for 'bn_drupal'@'10.0.10.0/255.255.255.240';
 | GRANT USAGE ON *.* TO <yourNewUser> IDENTIFIED BY PASSWORD 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'                           |
 | GRANT ALL PRIVILEGES ON `bitnami_drupal`.* TO <yourNewUser>                                                                      |
 +----------------------------------------------------------------------------------------------------------------------------------+
--- TODO check if password not completely shown is ok
 
 | Grants for bn_drupal@10.0.10.0/255.255.255.240                                                                                   |
 +----------------------------------------------------------------------------------------------------------------------------------+
