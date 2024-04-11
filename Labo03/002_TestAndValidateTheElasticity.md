@@ -37,6 +37,8 @@ stress --cpu 4 --io 2 --vm 2 --vm-bytes 128M --timeout 300s
 ```
 [INPUT]
 //Screen shot from cloud watch metric
+![image](https://github.com/BetterBlood/Master/assets/45463619/4c3139f8-3109-4588-a9b6-e93260076fac)
+
 ```
 [Sample](./img/CLD_AWS_CLOUDWATCH_CPU_METRICS.PNG)
 
