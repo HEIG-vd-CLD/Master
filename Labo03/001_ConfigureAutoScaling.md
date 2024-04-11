@@ -89,20 +89,15 @@ aws autoscaling create-auto-scaling-group \
     --min-size 1 \
     --max-size 4 \
     --desired-capacity 1 \
-    --vpc-zone-identifier $(aws ec2 describe-subnets \
-    --filters "Name=tag:Name,Values=*DEVOPSTEAM10*" \
-    --query "Subnets[*].SubnetId" \
-    --output text \
-     | paste -sd ",") \
+    --vpc-zone-identifier "subnet-02291f4084cacd8c9, subnet-06579a70777df8833" \
     --health-check-type ELB \
     --health-check-grace-period 10 \
-    --target-group-arns $(aws elbv2 describe-target-groups \
-    --query "TargetGroups[?TargetGroupName=='TG-DEVOPSTEAM10'].TargetGroupArn" --output text) \
+    --target-group-arns arn:aws:elasticloadbalancing:eu-west-3:709024702237:targetgroup/TG-DEVOPSTEAM10/49cb5841e91f6eeb \
     --termination-policies "OldestLaunchConfiguration" \
     --tags Key=Name,Value=AUTO_EC2_PRIVATE_DRUPAL_DEVOPSTEAM10 \
     --new-instances-protected-from-scale-in \
-    --metrics CollectionEnabled=True \
-    --target-tracking-configuration file://target-tracking-configuration.json \
+    --metrics CollectionEnabled=true
+    
 
 [OUTPUT]
 ```
@@ -116,11 +111,35 @@ Test ssh and web access.
 ```
 [INPUT]
 //ssh login
-ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2223:10.0.10.12:22
+ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2223:10.0.10.138:22
 ssh bitnami@localhost -p 2223 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 [OUTPUT]
+Linux ip-10-0-0-5 6.1.0-18-cloud-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.76-1 (2024-02-01) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Apr 11 14:41:11 2024 from 185.144.39.29
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+       ___ _ _                   _
+      | _ |_) |_ _ _  __ _ _ __ (_)
+      | _ \ |  _| ' \/ _` | '  \| |
+      |___/_|\__|_|_|\__,_|_|_|_|_|
+
+  *** Welcome to the Bitnami package for Drupal 10.2.3-1        ***
+  *** Documentation:  https://docs.bitnami.com/aws/apps/drupal/ ***
+  ***                 https://docs.bitnami.com/aws/             ***
+  *** Bitnami Forums: https://github.com/bitnami/vms/           ***
+Last login: Sat Mar 23 09:27:53 2024 from 10.0.0.5
+
 ```
 
 ```
 //screen shot, web access (login)
+![img.png](img.png)
 ```
