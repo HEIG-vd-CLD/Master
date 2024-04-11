@@ -1,4 +1,4 @@
-# Task 003 - Test and validate the elasticity
+# Task 002 - Test and validate the elasticity
 
 ![Schema](./img/CLD_AWS_INFA.PNG)
 
