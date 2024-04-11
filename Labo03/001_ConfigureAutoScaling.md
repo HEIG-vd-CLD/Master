@@ -33,8 +33,22 @@
 ```
 [INPUT]
 //cli command
+aws autoscaling create-launch-configuration \
+    --launch-configuration-name LT-DEVOPSTEAM10 \
+    --image-id $(aws ec2 describe-images \
+    --query "Images[?Name=='AMI_DRUPAL_DEVOPSTEAM10_LABO02_RDS'].ImageId" --output text) \
+    --instance-type t3.micro \
+    --security-groups $(aws ec2 describe-security-groups \
+    --query "SecurityGroups[?GroupName=='SG-PRIVATE-DRUPAL-DEVOPSTEAM10'].GroupId" --output text) \
+    --key-name CLD_KEY_DRUPAL_DEVOPSTEAM10 \
+    --associate-public-ip-address false \
+    --block-device-mappings "[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"VolumeSize\":10}}]" \
+    --instance-monitoring Enabled=true \
+    --no-ebs-optimized
+    --tags Key=Name,Value=LT-DEVOPSTEAM10
 
 [OUTPUT]
+TODO
 ```
 
 ## Create an auto scaling group
@@ -69,6 +83,26 @@
 ```
 [INPUT]
 //cli command
+aws autoscaling create-auto-scaling-group \
+    --auto-scaling-group-name ASGRP_DEVOPSTEAM10 \
+    --launch-configuration-name ASGRP_DEVOPSTEAM10 \
+    --min-size 1 \
+    --max-size 4 \
+    --desired-capacity 1 \
+    --vpc-zone-identifier $(aws ec2 describe-subnets \
+    --filters "Name=tag:Name,Values=*DEVOPSTEAM10*" \
+    --query "Subnets[*].SubnetId" \
+    --output text \
+     | paste -sd ",") \
+    --health-check-type ELB \
+    --health-check-grace-period 10 \
+    --target-group-arns $(aws elbv2 describe-target-groups \
+    --query "TargetGroups[?TargetGroupName=='TG-DEVOPSTEAM10'].TargetGroupArn" --output text) \
+    --termination-policies "OldestLaunchConfiguration" \
+    --tags Key=Name,Value=AUTO_EC2_PRIVATE_DRUPAL_DEVOPSTEAM10 \
+    --new-instances-protected-from-scale-in \
+    --metrics CollectionEnabled=True \
+    --target-tracking-configuration file://target-tracking-configuration.json \
 
 [OUTPUT]
 ```
@@ -82,7 +116,8 @@ Test ssh and web access.
 ```
 [INPUT]
 //ssh login
-
+ssh -i CLD_KEY_DMZ_DEVOPSTEAM10.pem devopsteam10@15.188.43.46 -L 2223:10.0.10.12:22
+ssh bitnami@localhost -p 2223 -i CLD_KEY_DRUPAL_DEVOPSTEAM10.pem
 [OUTPUT]
 ```
 
